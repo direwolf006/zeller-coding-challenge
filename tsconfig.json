@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "module": "CommonJS",
+        "module": "NodeNext",
         "moduleResolution": "nodenext",
         "target": "es2016",
         "strictNullChecks": true,
