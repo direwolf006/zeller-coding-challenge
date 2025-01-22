@@ -4,8 +4,15 @@
     "authors": "Rittesh.P.V (pvrittesh@gmail.com)",
     "version": "1.0.0",
     "main": "pathToMain",
-    "dependencies": {},
-    "scripts" : {
+    "scripts": {
         "test": "jest"
+    },
+    "devDependencies": {
+        "jest": "^29.7.0"
+    },
+    "dependencies": {
+        "@babel/preset-env": "^7.26.0",
+        "@babel/preset-typescript": "^7.26.0",
+        "ts-node": "^10.9.2"
     }
 }

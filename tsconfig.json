@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
         "module": "CommonJS",
-        "moduleResolution": "classic",
+        "moduleResolution": "nodenext",
         "target": "es2016",
         "strictNullChecks": true,
         "strictFunctionTypes": true,
