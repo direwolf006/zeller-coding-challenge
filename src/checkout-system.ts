@@ -30,6 +30,10 @@ export class CheckoutSystem {
         };
     }
 
+    getCurrentOrder(): CurrentOrder {
+        return this.currentOrder;
+    }
+
     clearOrder(): void {
         // clear current order and reset total amount
         this.currentOrder = {};

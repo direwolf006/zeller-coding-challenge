@@ -24,15 +24,18 @@ describe('Testing CheckoutSystem', () => {
     it('should add a product to the current order', () => {
       
       checkoutSystem.scan(ProductSKU.ATV);
+      const currentOrder = checkoutSystem.getCurrentOrder();
 
-      expect(checkoutSystem['currentOrder'][ProductSKU.ATV]).toBeDefined();
-      expect(checkoutSystem['currentOrder'][ProductSKU.ATV].quantity).toBe(1);
+      expect(currentOrder[ProductSKU.ATV]).toBeDefined();
+      expect(currentOrder[ProductSKU.ATV].quantity).toBe(1);
     });
 
     it('should handle invalid product SKU', () => {
       const invalidSku = 'INVALID_SKU';
       checkoutSystem.scan(invalidSku);
-      expect(checkoutSystem['currentOrder'][invalidSku]).toBeUndefined();
+      const currentOrder = checkoutSystem.getCurrentOrder();
+
+      expect(currentOrder[invalidSku]).toBeUndefined();
     });
   });
 
@@ -52,11 +55,12 @@ describe('Testing CheckoutSystem', () => {
       checkoutSystem.scan(ProductSKU.VGA);
 
       const total = checkoutSystem.total();
+      const currentOrder = checkoutSystem.getCurrentOrder();
 
       expect(total).toBe('$249.00');
-      expect(checkoutSystem['currentOrder'][ProductSKU.ATV].mrpPrice).toBe(328.5);
-      expect(checkoutSystem['currentOrder'][ProductSKU.ATV].discountPrice).toBe(219);
-      expect(checkoutSystem['currentOrder'][ProductSKU.ATV].discountCode).toBe('BUY3FOR2ATVFRD2k25');
+      expect(currentOrder[ProductSKU.ATV].mrpPrice).toBe(328.5);
+      expect(currentOrder[ProductSKU.ATV].discountPrice).toBe(219);
+      expect(currentOrder[ProductSKU.ATV].discountCode).toBe('BUY3FOR2ATVFRD2k25');
     });
   });
 
@@ -64,9 +68,11 @@ describe('Testing CheckoutSystem', () => {
     it('should clear the current order and reset total', () => {
       checkoutSystem.scan(ProductSKU.ATV);
       checkoutSystem.clearOrder();
+      const currentOrder = checkoutSystem.getCurrentOrder();
+      const total = checkoutSystem.total();
 
-      expect(checkoutSystem['currentOrder']).toEqual({});
-      expect(checkoutSystem['totalAmount']).toBe(0);
+      expect(currentOrder).toEqual({});
+      expect(total).toBe('$0.00');
     });
   });
 });
