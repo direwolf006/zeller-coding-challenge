@@ -1,11 +1,4 @@
-interface ProductMetaData {
-    name: string;
-    price: number;
-};
-
-export interface ProductCatalogue {
-    [sku: string] : ProductMetaData
-};
+import { ProductCatalogueBySku } from "../interfaces/models";
 
 export enum ProductSKU {
     IPD = "ipd",
@@ -14,7 +7,7 @@ export enum ProductSKU {
     VGA = "vga"
 }; 
 
-export const productCatalogue: ProductCatalogue = {
+export const currentProductCatalogue: ProductCatalogueBySku = {
     [ProductSKU.IPD]: {
         name: "Super iPad",
         price: 549.99
@@ -31,12 +24,4 @@ export const productCatalogue: ProductCatalogue = {
         name: "VGA adapter",
         price: 30.00
     }
-};
-
-export interface CurrentOrder {
-    [sku: string]: number;
-};
-
-export interface ProductRules {
-    [sku: string]: Function
 };

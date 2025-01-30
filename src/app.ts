@@ -1,41 +1,64 @@
-import { CheckoutSystem } from "./checkoutSystem";
-import { productCatalogue, ProductSKU } from "./models";
-import { PricingRules } from "./pricingRules";
+import { CheckoutSystem } from "./checkout-system";
+import { FriendshipDayDiscount } from "./pricing-rules/friendship-day-discount";
+import { IpadClearanceSaleDiscount } from "./pricing-rules/ipad-clearance-sale-discount";
+import { PricingRulesManager } from "./pricing-rules/pricing-rules-manager";
+import { ProductCatalogue } from "./product-catalogue";
+import { currentProductCatalogue, ProductSKU } from "./static/constants";
 
 
-// added special deal rules which are available at present
-const atvPricingRule = (productCount: number): number => {
-    const offerCountFormula = ((productCount - (productCount % 3)) - (Math.floor(productCount / 3)) + (productCount % 3));
-    const atvCount = productCount >= 3 ? offerCountFormula : productCount;
-    return atvCount * productCatalogue[ProductSKU.ATV].price;
-};
+export class App {
 
-const ipdPricingRule = (productCount: number): number => {
-    const ipdPrice = productCount > 4 ? 499.99 : productCatalogue[ProductSKU.IPD].price;
-    return productCount * ipdPrice;
-};
+    constructor(
+        private pricingRulesManager: PricingRulesManager,
+        private productCatalogue: ProductCatalogue,
+        private checkoutSystem: CheckoutSystem
+    ) {}
 
-const productPricingRules = new PricingRules();
-productPricingRules.addPricingRule(ProductSKU.ATV, atvPricingRule);
-productPricingRules.addPricingRule(ProductSKU.IPD, ipdPricingRule);
+    intializePricingRules(): void {
+        this.pricingRulesManager.addPricingRule(ProductSKU.ATV, new FriendshipDayDiscount());
+        this.pricingRulesManager.addPricingRule(ProductSKU.IPD, new IpadClearanceSaleDiscount());
+    }
 
+    intializeProductCatalogue(): void {
+        this.productCatalogue.addProduct(ProductSKU.IPD, currentProductCatalogue[ProductSKU.IPD]);
+        this.productCatalogue.addProduct(ProductSKU.MBP, currentProductCatalogue[ProductSKU.MBP]);
+        this.productCatalogue.addProduct(ProductSKU.ATV, currentProductCatalogue[ProductSKU.ATV]);
+        this.productCatalogue.addProduct(ProductSKU.VGA, currentProductCatalogue[ProductSKU.VGA]);
+    }
 
-const checkoutSystem = new CheckoutSystem(productPricingRules);
+    executeTestCase1(): void {
+        // Testcase 1
+        this.checkoutSystem.scan(ProductSKU.ATV);
+        this.checkoutSystem.scan(ProductSKU.ATV);
+        this.checkoutSystem.scan(ProductSKU.ATV);
+        this.checkoutSystem.scan(ProductSKU.VGA);
+        this.checkoutSystem.total();
+        this.checkoutSystem.clearOrder();
+    }
+    
+    executeTestCase2(): void {
+        // Testcase 2
+        this.checkoutSystem.scan(ProductSKU.ATV);
+        this.checkoutSystem.scan(ProductSKU.IPD);
+        this.checkoutSystem.scan(ProductSKU.IPD);
+        this.checkoutSystem.scan(ProductSKU.ATV);
+        this.checkoutSystem.scan(ProductSKU.IPD);
+        this.checkoutSystem.scan(ProductSKU.IPD);
+        this.checkoutSystem.scan(ProductSKU.IPD);
+        this.checkoutSystem.total();
+    }
 
-// Testcase 1
-checkoutSystem.scan(ProductSKU.ATV);
-checkoutSystem.scan(ProductSKU.ATV);
-checkoutSystem.scan(ProductSKU.ATV);
-checkoutSystem.scan(ProductSKU.VGA);
-checkoutSystem.total();
-checkoutSystem.clearOrder();
+    runCheckout(): void {
+        this.intializePricingRules();
+        this.intializeProductCatalogue();
+        this.executeTestCase1();
+        this.executeTestCase2();
+    }
+}
 
-// Testcase 2
-checkoutSystem.scan(ProductSKU.ATV);
-checkoutSystem.scan(ProductSKU.IPD);
-checkoutSystem.scan(ProductSKU.IPD);
-checkoutSystem.scan(ProductSKU.ATV);
-checkoutSystem.scan(ProductSKU.IPD);
-checkoutSystem.scan(ProductSKU.IPD);
-checkoutSystem.scan(ProductSKU.IPD);
-checkoutSystem.total();
+const pricingRulesManager: PricingRulesManager = new PricingRulesManager();
+const productCatalogue: ProductCatalogue = new ProductCatalogue();
+const checkoutSystem: CheckoutSystem = new CheckoutSystem(pricingRulesManager, productCatalogue);
+
+const app = new App(pricingRulesManager, productCatalogue, checkoutSystem);
+app.runCheckout();
